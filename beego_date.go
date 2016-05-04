@@ -29,8 +29,9 @@ func ParseDOB(controller *beego.Controller, form_prefix string) (time.Time, erro
   }
   
   layout := "2006-01-02"
-  dob_string := fmt.Sprintf("%s-%s-%s", dob_year, dob_month,
+  dob_string := fmt.Sprintf("%04d-%02d-%02d", dob_year, dob_month,
     dob_day)
+  // Debug("dob string %s", dob_string)
   dob, parse_err := time.Parse(layout, dob_string)
   if parse_err != nil {
     return time.Now(), parse_err
@@ -41,10 +42,13 @@ func ParseDOB(controller *beego.Controller, form_prefix string) (time.Time, erro
 }
 
 func parseFieldInt(controller *beego.Controller, form_prefix string, name string) (int, error) {
-  field_name := fmt.Sprintf("%s-%s", form_prefix, name)
+  field_name := fmt.Sprintf("%s%s", form_prefix, name)
   res, err := controller.GetInt(field_name)
   if (err != nil) {
+    Error("field %s=%v", field_name, controller.GetString(field_name))
     err = fmt.Errorf("Invalid field %s = %v", name, controller.GetString(field_name))
+  } else {
+    // Debug("field %s=%d", name, res)
   }
   return res, err
 }
